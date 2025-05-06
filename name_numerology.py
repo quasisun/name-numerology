@@ -32,7 +32,7 @@ def get_planet_and_traits(number):
 
 st.title("Нумерология имени по ведическим планетам")
 
-user_input = st.text_input("Введите имя или слово на русском:")
+user_input = st.text_input("Введите ФИО, имя или любое слово на русском языке:")
 
 if user_input:
     word_sum = calculate_word_sum(user_input)
