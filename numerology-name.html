@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Нумерология Имени</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+  :root {
+    --terracotta:   #C1440E;
+    --terracotta-d: #8B2E08;
+    --terracotta-l: #D4622A;
+    --beige:        #F5ECD7;
+    --beige-d:      #E8D5B0;
+    --beige-dd:     #D4B896;
+    --gold:         #B8860B;
+    --gold-l:       #D4A017;
+    --brown:        #5C3317;
+    --text:         #3A1F0A;
+    --shadow:       rgba(90,40,10,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background: var(--beige);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(193,68,14,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(184,134,11,0.07) 0%, transparent 60%);
+  }
+  body::before {
+    content: ''; position: fixed; inset: 12px;
+    border: 2px solid var(--gold); pointer-events: none; z-index: 100; opacity: 0.45;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 16px;
+    border: 1px solid var(--terracotta); pointer-events: none; z-index: 100; opacity: 0.25;
+  }
+
+  .page-wrap { max-width: 680px; margin: 0 auto; padding: 48px 24px 64px; }
+
+  header { text-align: center; margin-bottom: 36px; }
+  .om { font-size: 2.6rem; color: var(--terracotta); display: block; margin-bottom: 4px; }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 700; color: var(--terracotta-d);
+    letter-spacing: 0.06em; line-height: 1.2;
+  }
+  header h1 span {
+    display: block; font-size: 0.72em; font-weight: 400;
+    color: var(--gold); letter-spacing: 0.18em; margin-top: 6px;
+  }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 18px auto 0; max-width: 380px; }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .divider-gem { width: 8px; height: 8px; background: var(--terracotta); transform: rotate(45deg); flex-shrink: 0; }
+
+  /* ── Card ── */
+  .card {
+    background: linear-gradient(160deg, #fdf7ec 0%, var(--beige) 100%);
+    border: 1px solid var(--beige-dd); border-radius: 4px;
+    padding: 36px 40px 32px;
+    box-shadow: 0 4px 24px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.7);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--terracotta-d), var(--terracotta-l), var(--gold-l), var(--terracotta-l), var(--terracotta-d));
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  label {
+    font-family: 'Cinzel', serif; font-size: 0.72rem;
+    letter-spacing: 0.12em; color: var(--terracotta-d); text-transform: uppercase;
+  }
+  input[type="text"] {
+    font-family: 'EB Garamond', serif; font-size: 1.15rem;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--beige-dd); border-bottom-color: var(--gold);
+    border-radius: 2px; padding: 10px 14px; color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s; width: 100%; outline: none;
+  }
+  input[type="text"]:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 2px rgba(193,68,14,0.12); background: #fff;
+  }
+  .hint { font-size: 0.78rem; color: var(--gold); font-style: italic; }
+
+  .btn-row { margin-top: 24px; display: flex; justify-content: center; }
+  button[type="submit"] {
+    font-family: 'Cinzel', serif; font-size: 0.9rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: linear-gradient(135deg, var(--terracotta-d) 0%, var(--terracotta) 50%, var(--terracotta-l) 100%);
+    color: var(--beige); border: none; border-radius: 2px;
+    padding: 13px 42px; cursor: pointer;
+    box-shadow: 0 3px 12px rgba(193,68,14,0.35);
+    transition: transform 0.15s, box-shadow 0.15s; position: relative;
+  }
+  button[type="submit"]::after {
+    content: ''; position: absolute; inset: 1px;
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 1px; pointer-events: none;
+  }
+  button[type="submit"]:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(193,68,14,0.4); }
+  button[type="submit"]:active { transform: translateY(0); }
+
+  /* ── Result ── */
+  #result { margin-top: 28px; display: none; }
+
+  .result-card {
+    background: linear-gradient(160deg, #fff9f0 0%, #fdf3e3 100%);
+    border: 1px solid var(--beige-dd); border-radius: 4px;
+    box-shadow: 0 4px 24px var(--shadow); overflow: hidden; position: relative;
+  }
+  .result-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--terracotta-l), var(--gold));
+  }
+
+  .result-header {
+    background: linear-gradient(135deg, var(--terracotta-d), #6B1E05);
+    color: var(--beige); padding: 28px 36px 24px; text-align: center; position: relative;
+  }
+  .result-header::after {
+    content: '✦'; position: absolute; bottom: -11px; left: 50%;
+    transform: translateX(-50%); background: var(--terracotta-d);
+    color: var(--gold-l); font-size: 0.8rem;
+    width: 22px; height: 22px; line-height: 22px;
+    border-radius: 50%; border: 2px solid var(--beige-d); z-index: 1;
+  }
+  .number-big {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(3rem, 10vw, 5rem);
+    font-weight: 700; color: var(--gold-l);
+    line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.4); display: block;
+  }
+  .planet-name {
+    font-family: 'Cinzel', serif; font-size: 1.1rem;
+    color: rgba(245,236,215,0.9); letter-spacing: 0.14em;
+    margin-top: 8px; display: block;
+  }
+  .input-name-display {
+    font-size: 0.9rem; color: rgba(245,236,215,0.55);
+    font-style: italic; margin-top: 4px;
+  }
+
+  .result-body { padding: 36px 36px 28px; }
+
+  .traits-box {
+    background: rgba(184,134,11,0.06);
+    border: 1px solid rgba(184,134,11,0.2);
+    border-radius: 2px; padding: 14px 18px;
+    font-size: 0.95rem; color: var(--brown);
+    font-style: italic; line-height: 1.7;
+    margin-bottom: 24px; text-align: center;
+  }
+
+  .details-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px;
+    margin-bottom: 24px;
+  }
+  .detail-item { border-bottom: 1px solid var(--beige-dd); padding-bottom: 12px; }
+  .detail-label {
+    font-family: 'Cinzel', serif; font-size: 0.65rem;
+    letter-spacing: 0.16em; color: var(--terracotta);
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .detail-value { font-size: 1.05rem; color: var(--text); line-height: 1.5; }
+
+  /* ── Colour dots ── */
+  .color-dots { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .color-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1px solid rgba(90,40,10,0.2);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+
+  /* ── Expand button ── */
+  .expand-btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; width: 100%; padding: 11px 0;
+    background: none; border: 1px solid var(--beige-dd); border-radius: 2px;
+    font-family: 'Cinzel', serif; font-size: 0.7rem;
+    letter-spacing: 0.14em; color: var(--gold); text-transform: uppercase;
+    cursor: pointer; transition: background 0.2s, border-color 0.2s;
+  }
+  .expand-btn:hover { background: rgba(184,134,11,0.06); border-color: var(--gold); }
+  .expand-arrow { transition: transform 0.25s; }
+  .expand-btn.open .expand-arrow { transform: rotate(180deg); }
+
+  .full-desc {
+    display: none; margin-top: 16px; padding: 20px 22px;
+    background: rgba(255,255,255,0.5); border: 1px solid var(--beige-dd);
+    border-radius: 2px; font-size: 0.97rem; line-height: 1.9; color: var(--brown);
+  }
+  .full-desc.open { display: block; }
+  .full-desc p { margin-bottom: 8px; }
+  .full-desc p:last-child { margin-bottom: 0; }
+  .full-desc strong { color: var(--terracotta-d); }
+
+  /* ── Calc breakdown ── */
+  .calc-row {
+    margin-top: 20px; padding: 12px 16px;
+    border: 1px dashed var(--beige-dd); border-radius: 2px;
+    font-size: 0.82rem; color: var(--gold); text-align: center;
+    font-style: italic; line-height: 1.7;
+  }
+
+  /* ── Footer ── */
+  .source-footer {
+    margin-top: 28px; padding: 16px 20px;
+    background: rgba(184,134,11,0.05);
+    border: 1px solid rgba(184,134,11,0.18); border-radius: 3px;
+    text-align: center; font-size: 0.82rem; line-height: 1.9; color: var(--brown);
+  }
+  .source-footer a { color: var(--terracotta); text-decoration: none; border-bottom: 1px solid rgba(193,68,14,0.3); }
+  .source-footer a:hover { border-bottom-color: var(--terracotta); }
+
+  .footer-note {
+    text-align: center; margin-top: 32px;
+    font-size: 0.8rem; color: var(--gold); font-style: italic; opacity: 0.7;
+  }
+
+  @media (max-width: 520px) {
+    .card { padding: 24px 18px 20px; }
+    .result-body { padding: 24px 18px 20px; }
+    .result-header { padding: 22px 18px 18px; }
+    .details-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <span class="om">ॐ</span>
+    <h1>Нумерология Имени
+      <span>Name Numerology · Vedic System</span>
+    </h1>
+    <div class="divider"><div class="divider-gem"></div></div>
+  </header>
+
+  <div class="card">
+    <form id="nameForm">
+      <div class="form-group">
+        <label for="nameInput">Введите имя</label>
+        <input type="text" id="nameInput" placeholder="Например: Светлана" autocomplete="off" required>
+        <span class="hint">Только русские буквы · имя, отчество или полное ФИО</span>
+      </div>
+      <div class="btn-row">
+        <button type="submit">Рассчитать число</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="result"></div>
+
+  <p class="footer-note">Ведическая нумерология · планетарные соответствия · С. А. Кройцер</p>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  LETTER VALUES
+// ══════════════════════════════════════════════════════════
+const LETTER_VALUES = {
+  'а':1,'б':2,'в':3,'г':4,'д':5,'е':6,'ё':7,'ж':8,'з':9,'и':10,
+  'й':11,'к':12,'л':13,'м':14,'н':15,'о':16,'п':17,'р':18,'с':19,
+  'т':20,'у':21,'ф':22,'х':23,'ц':24,'ч':25,'ш':26,'щ':27,'ъ':28,
+  'ы':29,'ь':30,'э':31,'ю':32,'я':33
+};
+
+function calcWordSum(word){
+  let total = [...word.toLowerCase()].reduce((s,c) => s + (LETTER_VALUES[c] || 0), 0);
+  while(total >= 10) total = [...String(total)].reduce((s,c) => s + parseInt(c), 0);
+  return total;
+}
+
+// ══════════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════════
+const PLANETS = {
+  1:{ planet:'Солнце', planet_en:'Sūrya', color:'#E52B50',
+      traits:'Величественный, мужественный, авторитетный, решительный, харизматичный, независимый',
+      professions:'Управление, политика, лидерство, государственная служба',
+      colors_name:'Рубиновый, золотой, оранжевый',
+      colors_hex:['#9B111E','#D4A017','#FF8C00'],
+      stones:'Рубин, шпинель',
+      desc:`<p><strong>Солнце</strong> даёт стремление к признанию, власти и самовыражению. Люди этого числа обладают природным авторитетом — их замечают в любой компании.</p>
+<p><strong>Характер:</strong> логичность, напористость, независимость, гордость. Умеют вести за собой, но нуждаются в уважении.</p>
+<p><strong>Рекомендация:</strong> носите золото и рубины, окружайте себя тёплыми тонами. Избегайте высокомерия — это главная ловушка числа 1.</p>`
+  },
+  2:{ planet:'Луна', planet_en:'Candra',  color:'#87CEEB',
+      traits:'Эмоциональный, восприимчивый, мечтательный, заботливый, деликатный, интуитивный',
+      professions:'Искусство, педагогика, медицина, психология, дипломатия',
+      colors_name:'Белый, кремовый, серебристый',
+      colors_hex:['#F5F5F5','#FFFDD0','#C0C0C0'],
+      stones:'Лунный камень, жемчуг',
+      desc:`<p><strong>Луна</strong> управляет эмоциями, воображением и внутренним миром. Люди числа 2 тонко чувствуют окружающих и обладают развитой интуицией.</p>
+<p><strong>Характер:</strong> мягкость, женственность, изменчивость настроения, глубокая чувствительность.</p>
+<p><strong>Рекомендация:</strong> носите жемчуг и лунный камень. Важно поддерживать эмоциональный баланс — медитация и природа помогают восстановить силы.</p>`
+  },
+  3:{ planet:'Юпитер', planet_en:'Guru',   color:'#F4C430',
+      traits:'Духовный, дружелюбный, убедительный, щедрый, самодостаточный, дисциплинированный',
+      professions:'Преподавание, философия, религия, право, медицина',
+      colors_name:'Жёлтый, шафрановый',
+      colors_hex:['#FFD700','#F4A460'],
+      stones:'Жёлтый сапфир, топаз',
+      desc:`<p><strong>Юпитер</strong> — планета знания, удачи и духовного роста. Люди числа 3 — прирождённые учителя и наставники, их слова несут вес.</p>
+<p><strong>Характер:</strong> щедрость, вера, ответственность, любовь к знаниям и справедливости.</p>
+<p><strong>Рекомендация:</strong> носите жёлтый сапфир или золотой топаз. По четвергам молитесь и творите добро — это усиливает энергию Юпитера.</p>`
+  },
+  4:{ planet:'Раху',   planet_en:'Rāhu',   color:'#86261c',
+      traits:'Нестандартный, импульсивный, скрытный, бунтарский, изобретательный',
+      professions:'Технологии, мистика, изобретательство, исследования',
+      colors_name:'Тёмно-коричневый, серый, дымчатый',
+      colors_hex:['#86261c','#808080','#B0A090'],
+      stones:'Гессонит (гомед)',
+      desc:`<p><strong>Раху</strong> — узловая точка, символ неожиданных поворотов и нестандартного мышления. Люди числа 4 часто идут против течения.</p>
+<p><strong>Характер:</strong> независимость, внутренняя борьба, отрешённость, склонность к резким переменам.</p>
+<p><strong>Рекомендация:</strong> практикуйте регулярность и дисциплину — они уравновешивают нестабильность Раху. Гессонит помогает направить энергию в конструктивное русло.</p>`
+  },
+  5:{ planet:'Меркурий', planet_en:'Budha', color:'#009B77',
+      traits:'Благородный, весёлый, хитрый, умный, чувствительный, адаптивный',
+      professions:'Торговля, журналистика, реклама, IT, ораторство',
+      colors_name:'Зелёный, изумрудный',
+      colors_hex:['#009B77','#50C878','#2E8B57'],
+      stones:'Изумруд',
+      desc:`<p><strong>Меркурий</strong> — планета интеллекта, речи и коммуникации. Люди числа 5 — прирождённые переговорщики и многозадачники.</p>
+<p><strong>Характер:</strong> игривость, живость ума, находчивость, гибкость в любых обстоятельствах.</p>
+<p><strong>Рекомендация:</strong> носите изумруд или зелёный турмалин. По средам — благоприятный день для начала новых дел и переговоров.</p>`
+  },
+  6:{ planet:'Венера',  planet_en:'Śukra',  color:'#FADADD',
+      traits:'Романтичный, обаятельный, восприимчивый, дипломатичный, творческий, эстетичный',
+      professions:'Мода, искусство, актёрство, косметология, дизайн',
+      colors_name:'Розовый, белый, кремовый',
+      colors_hex:['#FADADD','#FFF0F5','#FFFACD'],
+      stones:'Бриллиант, белый сапфир',
+      desc:`<p><strong>Венера</strong> — планета красоты, любви и чувственности. Люди числа 6 притягивают окружающих своим обаянием и вкусом.</p>
+<p><strong>Характер:</strong> изящество, романтичность, стремление к гармонии, развитое чувство прекрасного.</p>
+<p><strong>Рекомендация:</strong> окружайте себя красивыми вещами — это буквально питает вашу энергию. Белый сапфир или горный хрусталь усиливают влияние Венеры.</p>`
+  },
+  7:{ planet:'Кету',    planet_en:'Ketu',   color:'#b2beb5',
+      traits:'Мистичный, мечтательный, интуитивный, находчивый, духовный',
+      professions:'Эзотерика, уединённые практики, наука, исследования',
+      colors_name:'Фиолетовый, дымчато-белый',
+      colors_hex:['#7B68EE','#E8E8E8','#DDA0DD'],
+      stones:'Кошачий глаз',
+      desc:`<p><strong>Кету</strong> — планета освобождения, интуиции и прошлых жизней. Люди числа 7 часто обладают даром предвидения и тягой к непознанному.</p>
+<p><strong>Характер:</strong> склонность к одиночеству, мистика, глубокая духовность, нелинейное мышление.</p>
+<p><strong>Рекомендация:</strong> носите кошачий глаз. Медитация и тишина — ваш главный ресурс. Избегайте изоляции: духовность должна питать жизнь, а не уводить от неё.</p>`
+  },
+  8:{ planet:'Сатурн',  planet_en:'Śani',   color:'#0047AB',
+      traits:'Мудрый, трудолюбивый, терпеливый, ответственный, сильный духом, выносливый',
+      professions:'Строительство, право, архитектура, металлургия, государственная служба',
+      colors_name:'Чёрный, тёмно-синий',
+      colors_hex:['#1C1C1C','#0047AB','#483D8B'],
+      stones:'Синий сапфир, аметист',
+      desc:`<p><strong>Сатурн</strong> — планета кармы, дисциплины и долгосрочных результатов. Люди числа 8 достигают всего упорным трудом — и это делает их победы особенно ценными.</p>
+<p><strong>Характер:</strong> сдержанность, серьёзность, глубокое чувство ответственности, стойкость перед испытаниями.</p>
+<p><strong>Рекомендация:</strong> субботы — ваш особый день. Служение другим и честный труд — лучший способ умиротворить Сатурн. Синий сапфир усиливает, но требует осторожности.</p>`
+  },
+  9:{ planet:'Марс',    planet_en:'Kuja',   color:'#ff4040',
+      traits:'Воинственный, энергичный, решительный, смелый, сильный, прямолинейный',
+      professions:'Военные, спортсмены, хирурги, инженеры, предприниматели',
+      colors_name:'Красный, коралловый',
+      colors_hex:['#CC0000','#FF6347','#FF4500'],
+      stones:'Коралл, красный гранат',
+      desc:`<p><strong>Марс</strong> — планета энергии, силы и действия. Люди числа 9 рождены для борьбы и победы — они не сдаются там, где другие отступают.</p>
+<p><strong>Характер:</strong> напор, отвага, страсть, прямолинейность. Могут быть резкими, но никогда — неискренними.</p>
+<p><strong>Рекомендация:</strong> носите красный коралл. Направьте энергию в спорт или созидание — иначе она найдёт выход в конфликтах. По вторникам — благоприятные начинания.</p>`
+  }
+};
+
+// ══════════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════════
+function renderResult(name, num){
+  const p = PLANETS[num];
+  const letters = [...name.toLowerCase()].filter(c => LETTER_VALUES[c]);
+  const vals = letters.map(c => LETTER_VALUES[c]);
+  const rawSum = vals.reduce((a,b) => a+b, 0);
+  const stepsArr = [];
+  let s = rawSum;
+  while(s >= 10){ s = [...String(s)].reduce((a,c)=>a+parseInt(c),0); stepsArr.push(s); }
+  const calcStr = vals.join(' + ') + ' = ' + rawSum
+    + (stepsArr.length ? ' → ' + stepsArr.join(' → ') : '');
+
+  const dotsHtml = p.colors_hex.map(h =>
+    `<div class="color-dot" style="background:${h}" title="${h}"></div>`
+  ).join('');
+
+  document.getElementById('result').innerHTML = `
+  <div class="result-card">
+    <div class="result-header">
+      <span class="number-big">${num}</span>
+      <span class="planet-name">✦ ${p.planet} · ${p.planet_en} ✦</span>
+      <div class="input-name-display">${name}</div>
+    </div>
+    <div class="result-body">
+
+      <div class="traits-box">${p.traits}</div>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <div class="detail-label">Планета</div>
+          <div class="detail-value" style="display:flex;align-items:center;gap:8px">
+            <div style="width:12px;height:12px;border-radius:50%;background:${p.color};flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></div>
+            ${p.planet}
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Камни</div>
+          <div class="detail-value">${p.stones}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Профессии</div>
+          <div class="detail-value">${p.professions}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Цвета</div>
+          <div class="detail-value">
+            ${p.colors_name}
+            <div class="color-dots">${dotsHtml}</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="expand-btn" onclick="toggleDesc(this)">
+        Полное описание <span class="expand-arrow">▼</span>
+      </button>
+      <div class="full-desc">${p.desc}</div>
+
+      <div class="calc-row">
+        Расчёт: ${calcStr}
+      </div>
+
+      <div class="source-footer">
+        За подробной нумерологической консультацией обратитесь к специалисту:<br>
+        <a href="https://goroskop1008.ru" target="_blank"><strong>goroskop1008.ru</strong></a>
+      </div>
+
+    </div>
+  </div>`;
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function toggleDesc(btn){
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+  btn.querySelector('.expand-arrow').style.transform =
+    btn.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+// ── Submit ──
+document.getElementById('nameForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const raw = document.getElementById('nameInput').value.trim();
+  if(!raw) return;
+  const clean = raw.replace(/[^а-яёА-ЯЁ\s]/g,'').trim();
+  if(!clean){ alert('Введите имя русскими буквами'); return; }
+  const num = calcWordSum(clean);
+  renderResult(raw, num);
+});
+</script>
+</body>
+</html>
